@@ -1,15 +1,18 @@
 package com.msc.parser;
 
 import com.msc.handler.JoinRequestHandler;
-import com.msc.handler.MsgResponseHandler;
+import com.msc.handler.IncomingMsgHandler;
 import com.msc.handler.RegResponseHandler;
 import com.msc.model.MessageConstants;
 
 import java.util.StringTokenizer;
 
+/**
+ * This class is used to parse an incoming message.
+ */
 public class MessageParser {
 
-    public MsgResponseHandler parse(String message) {
+    public IncomingMsgHandler parse(String message) {
         message = message.substring(0, Integer.parseInt(message.substring(0, 4)));
         StringTokenizer stringTokenizer = new StringTokenizer(message, " ");
         int length = Integer.parseInt(stringTokenizer.nextToken());

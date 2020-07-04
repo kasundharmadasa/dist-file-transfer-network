@@ -14,6 +14,9 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.Future;
 
+/**
+ * This is the main class for the node.
+ */
 public class NodeMain {
 
     public static void main(String args[]) {
@@ -44,7 +47,7 @@ public class NodeMain {
                 "American Idol",
                 "Hacking for Dummies");
 
-        while (Files.getInstance().getPeerNodeList().size() < 4) {
+        while (Files.getInstance().getLocalFileList().size() < 4) {
             Files.getInstance().insert(getRandomElement(initialFileList));
         }
 

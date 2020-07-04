@@ -3,6 +3,9 @@ package com.msc.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is used to store the local files owned by the node.
+ */
 public class Files {
 
     private static List<String> fileList;
@@ -32,7 +35,7 @@ public class Files {
 
     }
 
-    public List<String> getPeerNodeList() {
+    public List<String> getLocalFileList() {
         return fileList;
     }
 

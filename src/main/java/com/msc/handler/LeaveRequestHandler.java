@@ -5,7 +5,10 @@ import com.msc.model.Node;
 
 import java.util.StringTokenizer;
 
-public class LeaveRequestHandler implements MsgResponseHandler {
+/**
+ * This class is used to handle graceful leave messages received from the neighbours.
+ */
+public class LeaveRequestHandler implements IncomingMsgHandler {
 
     @Override
     public void handle(String message) {
@@ -19,6 +22,8 @@ public class LeaveRequestHandler implements MsgResponseHandler {
         String port = stringTokenizer.nextToken();
 
         System.out.println("Received leave message: " + ip + ":" + port);
+
+        // Remove the neighbour details from the neighbour table.
         neighbourTable.remove(new Node(ip, Integer.parseInt(port)));
         System.out.println("Removed neighbour: " + ip + ":" + port);
     }

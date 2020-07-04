@@ -5,7 +5,10 @@ import com.msc.model.Node;
 
 import java.util.StringTokenizer;
 
-public class JoinRequestHandler implements MsgResponseHandler {
+/**
+ * This class is used to handle the incoming join requests by peer nodes.
+ */
+public class JoinRequestHandler implements IncomingMsgHandler {
 
     @Override
     public void handle(String message) {
@@ -20,6 +23,8 @@ public class JoinRequestHandler implements MsgResponseHandler {
         String port = stringTokenizer.nextToken();
 
         System.out.println("Received join message: " + ip + ":" + port);
+
+        // insert the neighbour details into the neighbour table.
         neighbourTable.insert(new Node(ip, Integer.parseInt(port)));
         System.out.println("Added as a neighbour: " + ip + ":" + port);
 

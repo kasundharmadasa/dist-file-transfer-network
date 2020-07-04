@@ -1,5 +1,8 @@
 package com.msc.model;
 
+/**
+ * This class is used to hold the message constants.
+ */
 public class MessageConstants {
 
     public static final String REG_MESSAGE = "REG";

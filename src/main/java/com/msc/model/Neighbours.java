@@ -3,6 +3,9 @@ package com.msc.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is used to store the neighbour details.
+ */
 public class Neighbours {
 
     private static List<Node> neighbourList;

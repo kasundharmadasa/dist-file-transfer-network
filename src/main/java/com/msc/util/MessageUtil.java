@@ -3,6 +3,9 @@ package com.msc.util;
 import com.msc.model.CommonConstants;
 import com.msc.model.MessageConstants;
 
+/**
+ * This is a utility class to hold the message functions.
+ */
 public class MessageUtil {
 
     public static String generateMessage(String msgType, String ip, Integer port, String... username) {

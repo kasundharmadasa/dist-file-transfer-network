@@ -1,7 +1,7 @@
 package com.msc.connector;
 
 import com.msc.config.NodeConfig;
-import com.msc.handler.MsgResponseHandler;
+import com.msc.handler.IncomingMsgHandler;
 import com.msc.parser.MessageParser;
 
 import java.io.IOException;
@@ -13,6 +13,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+/**
+ * The UDP implementation for the connector.
+ */
 public class UDPConnector implements Connector {
 
     private static DatagramSocket socket;
@@ -57,7 +60,7 @@ public class UDPConnector implements Connector {
         String incomingMessage = new String(bufferIncoming);
 
         MessageParser messageParser = new MessageParser();
-        MsgResponseHandler responseHandler = messageParser.parse(incomingMessage);
+        IncomingMsgHandler responseHandler = messageParser.parse(incomingMessage);
         return (Future<String>) executorService.submit(() -> responseHandler.handle(incomingMessage));
     }
 

@@ -1,5 +1,8 @@
 package com.msc.model;
 
+/**
+ * This the model class for a node.
+ */
 public class Node {
     private String nodeIp;
     private int port;

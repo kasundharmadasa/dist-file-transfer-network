@@ -1,5 +1,8 @@
 package com.msc.config;
 
+/**
+ * This class is used to store the configurations of the node.
+ */
 public class NodeConfig {
 
     String ip;

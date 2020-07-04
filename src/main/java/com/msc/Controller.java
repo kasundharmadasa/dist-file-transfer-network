@@ -1,6 +1,7 @@
 package com.msc;
 
 import com.msc.config.NodeConfig;
+import com.msc.model.CommonConstants;
 import com.msc.util.MessageUtil;
 import com.msc.connector.Connector;
 import com.msc.connector.UDPConnector;
@@ -38,6 +39,14 @@ public class Controller {
 
         String message = MessageUtil.generateMessage(MessageConstants.LEAVE_MESSAGE, NodeConfig.getInstance().getIp(),
                 NodeConfig.getInstance().getPort());
+        connector.send(message, InetAddress.getByName(ip), port);
+
+    }
+
+    public static void search(String ip, int port, String searchString) throws IOException {
+
+        String message = MessageUtil.generateSearchMessage(NodeConfig.getInstance().getIp(),
+                NodeConfig.getInstance().getPort(), searchString, CommonConstants.HOPS);
         connector.send(message, InetAddress.getByName(ip), port);
 
     }
