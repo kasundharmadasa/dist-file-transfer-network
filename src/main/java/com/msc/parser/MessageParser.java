@@ -3,6 +3,7 @@ package com.msc.parser;
 import com.msc.handler.JoinRequestHandler;
 import com.msc.handler.IncomingMsgHandler;
 import com.msc.handler.RegResponseHandler;
+import com.msc.handler.SearchRequestHandler;
 import com.msc.model.MessageConstants;
 
 import java.util.StringTokenizer;
@@ -25,7 +26,7 @@ public class MessageParser {
             case MessageConstants.JOIN_MESSAGE:
                 return new JoinRequestHandler();
             case MessageConstants.SEARCH_MESSAGE:
-                return new JoinRequestHandler();
+                return new SearchRequestHandler();
         }
         return null;
     }
