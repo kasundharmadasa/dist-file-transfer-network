@@ -42,12 +42,4 @@ public class Controller {
 
     }
 
-    public static void search(String ip, int port) throws IOException {
-
-        String message = MessageUtil.generateMessage(MessageConstants.SEARCH_MESSAGE, NodeConfig.getInstance().getIp(),
-                NodeConfig.getInstance().getPort());
-        connector.send(message, InetAddress.getByName(ip), port);
-
-    }
-
 }
