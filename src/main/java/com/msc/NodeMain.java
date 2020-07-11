@@ -91,7 +91,7 @@ public class NodeMain {
                     for (String searchQuery : selectedQueries) {
                         System.out.println("Initiating search for " + searchQuery);
                         initiateSearch(searchQuery);
-                        Thread.sleep(5000);
+                        Thread.sleep(10000);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
