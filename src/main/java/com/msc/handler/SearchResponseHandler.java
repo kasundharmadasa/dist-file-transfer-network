@@ -35,7 +35,6 @@ public class SearchResponseHandler implements IncomingMsgHandler {
             for (int i = 1; i < files.length; i++) {
                 if (StringUtils.isNotBlank(files[i].trim())) {
                     fileList.add(files[i].trim());
-                    System.out.println("filename: " + files[i].trim());
                 }
             }
 
@@ -55,7 +54,11 @@ public class SearchResponseHandler implements IncomingMsgHandler {
                     }
                 }
             }
-            System.out.println("found " + message);
+
+            for (String fileName : fileList) {
+                System.out.println("found file " + fileName + " in the node " + ip + ":" + port + " with " + hops +
+                        " hops");
+            }
         } else {
             System.out.println("file not found");
         }

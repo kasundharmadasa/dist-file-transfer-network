@@ -3,6 +3,7 @@ package com.msc;
 import com.msc.config.NodeConfig;
 import com.msc.connector.Connector;
 import com.msc.connector.UDPConnector;
+import com.msc.model.CommonConstants;
 import com.msc.model.LocalIndex;
 import com.msc.model.LocalIndexTable;
 import com.msc.model.Neighbours;
@@ -77,21 +78,44 @@ public class NodeMain {
                 System.exit(0);
             }
 
+            // search from command
             if (command.startsWith("search")) {
                 String searchString = command.substring(command.indexOf(" ") + 1);
+                initiateSearch(searchString);
+            }
 
-                SearchRequest searchRequest = new SearchRequest(NodeConfig.getInstance().getIp(),
-                        NodeConfig.getInstance().getPort(),
-                        NodeConfig.getInstance().getIp(),
-                        NodeConfig.getInstance().getPort(), searchString, 1);
-
+            // initiate random search
+            if ("rand search".equals(command)) {
                 try {
-                    Controller.search(searchRequest);
-                } catch (IOException e) {
+                    List<String> selectedQueries = selectSearchQueries();
+                    for (String searchQuery : selectedQueries) {
+                        System.out.println("Initiating search for " + searchQuery);
+                        initiateSearch(searchQuery);
+                        Thread.sleep(5000);
+                    }
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
+        }
+    }
+
+    /**
+     * Initiate the search request
+     *
+     * @param searchQuery
+     */
+    private static void initiateSearch(String searchQuery) {
+
+        SearchRequest searchRequest = new SearchRequest(NodeConfig.getInstance().getIp(),
+                NodeConfig.getInstance().getPort(),
+                NodeConfig.getInstance().getIp(),
+                NodeConfig.getInstance().getPort(), searchQuery, 1);
+
+        try {
+            Controller.search(searchRequest);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -123,7 +147,7 @@ public class NodeMain {
                 "Hacking for Dummies");
 
         List<Integer> selectedFileIndexes = new ArrayList<>();
-        while (selectedFileIndexes.size() < 4) {
+        while (selectedFileIndexes.size() < CommonConstants.FILES_PER_NODE) {
             Integer randIndex = new Random().nextInt(initialFileList.size());
             if (!selectedFileIndexes.contains(randIndex)) {
                 selectedFileIndexes.add(randIndex);
@@ -141,6 +165,76 @@ public class NodeMain {
                 NodeConfig.getInstance().getPort(), selectedFiles, 0));
 
         return selectedFiles;
+    }
+
+    private static List<String> selectSearchQueries() {
+
+      List<String> queriesList  = Arrays.asList("Twilight",
+                "Jack",
+                "American Idol",
+                "Happy Feet",
+                "Twilight saga",
+                "Happy Feet",
+                "Happy Feet",
+                "Feet",
+                "Happy Feet",
+                "Twilight",
+                "Windows",
+                "Happy Feet",
+                "Mission Impossible",
+                "Twilight",
+                "Windows 8",
+                "The",
+                "Happy",
+                "Windows 8",
+                "Happy Feet",
+                "Super Mario",
+                "Jack and Jill",
+                "Happy Feet",
+                "Impossible",
+                "Happy Feet",
+                "Turn Up The Music",
+                "Adventures of Tintin",
+                "Twilight saga",
+                "Happy Feet",
+                "Super Mario",
+                "American Pickers",
+                "Microsoft Office 2010",
+                "Twilight",
+                "Modern Family",
+                "Jack and Jill",
+                "Jill",
+                "Glee",
+                "The Vampire Diarie",
+                "King Arthur",
+                "Jack and Jill",
+                "King Arthur",
+                "Windows XP",
+                "Harry Potter",
+                "Feet",
+                "Kung Fu Panda",
+                "Lady Gaga",
+                "Gaga",
+                "Happy Feet",
+                "Twilight",
+                "Hacking",
+                "King");
+
+        List<Integer> selectedQueryIndexes = new ArrayList<>();
+        while (selectedQueryIndexes.size() < CommonConstants.SEARCH_QUERIES_PER_ODE) {
+            Integer randIndex = new Random().nextInt(queriesList.size());
+            if (!selectedQueryIndexes.contains(randIndex)) {
+                selectedQueryIndexes.add(randIndex);
+            }
+        }
+
+        List<String> selectedQueries = new ArrayList<>();
+        for (Integer selectedFileIndex : selectedQueryIndexes) {
+            System.out.println("Selected Query: " + queriesList.get(selectedFileIndex));
+            selectedQueries.add(queriesList.get(selectedFileIndex));
+        }
+
+        return selectedQueries;
     }
 
     //simple function to echo data to terminal
