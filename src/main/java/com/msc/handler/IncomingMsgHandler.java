@@ -5,6 +5,6 @@ package com.msc.handler;
  */
 public interface IncomingMsgHandler {
 
-    public void handle(String message);
+    public void handle(String message, String sourceIp, Integer sourcePort);
 
 }

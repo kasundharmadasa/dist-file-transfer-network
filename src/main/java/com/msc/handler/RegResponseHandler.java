@@ -1,10 +1,15 @@
 package com.msc.handler;
 
 import com.msc.Controller;
+import com.msc.config.NodeConfig;
+import com.msc.model.CommonConstants;
 import com.msc.model.Neighbours;
 import com.msc.model.Node;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 /**
@@ -13,44 +18,77 @@ import java.util.StringTokenizer;
 public class RegResponseHandler implements IncomingMsgHandler {
 
     @Override
-    public void handle(String message) {
+    public void handle(String message, String sourceIp, Integer sourcePort) {
 
         Neighbours neighbourTable = Neighbours.getInstance();
-        System.out.println("Reg response: " + message);
         StringTokenizer stringTokenizer = new StringTokenizer(message, " ");
         int length = Integer.parseInt(stringTokenizer.nextToken());
         String command = stringTokenizer.nextToken();
-        int nodeCount = Integer.parseInt(stringTokenizer.nextToken());
+        int nodeCount = Integer.parseInt(stringTokenizer.nextToken().replaceAll("[^\\d.]", ""));
         switch (nodeCount) {
             case 9996:
-                System.out.println(" failed, can’t register. BS is full.");
+                System.out.println("Failed, can’t register. BS is full.");
                 break;
             case 9997:
-                System.out.println(" failed, registered to another user, try a different IP and port");
+                System.out.println("Failed, registered to another user, try a different IP and port");
                 break;
             case 9998:
-                System.out.println(" failed, already registered to you, unregister first");
+                System.out.println("Failed, already registered to you, unregister first");
+
+                // Unregister and re register.
+                try {
+                    Controller.unregister();
+
+                    Thread.sleep(1000);
+                    Controller.register(NodeConfig.getInstance().getIp(), NodeConfig.getInstance().getPort(),
+                            NodeConfig.getInstance().getUsername());
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
                 break;
             case 9999:
-                System.out.println(" failed, there is some error in the command");
+                System.out.println("Failed, there is some error in the command");
                 break;
             case 0:
-                System.out.println(" Request is successful but, no other nodes in the system");
+                System.out.println("Request is successful, no nodes in the system");
                 break;
             default:
+                List<Node> neighbours = new ArrayList<>();
+                List<Node> selectedNeighbours = new ArrayList<>();
+
                 for (int i = 0; i < nodeCount; i++) {
                     String ip = stringTokenizer.nextToken().trim();
                     String port = stringTokenizer.nextToken().trim();
 
-                    // Add the node information sent by the bootstrap server into the neighbour table.
-                    neighbourTable.insert(new Node(ip, Integer.parseInt(port)));
+                    neighbours.add(new Node(ip, Integer.parseInt(port)));
+                }
 
+                if (neighbours.size() > CommonConstants.MAX_ALLOWED_TO_JOIN) {
+                    List<Integer> randNodeIndexes = new ArrayList<>();
+                    while (randNodeIndexes.size() < CommonConstants.MAX_ALLOWED_TO_JOIN) {
+                        Integer randIndex = new Random().nextInt(neighbours.size());
+                        if (!randNodeIndexes.contains(randIndex)) {
+                            selectedNeighbours.add(neighbours.get(randIndex));
+                            randNodeIndexes.add(randIndex);
+                        }
+                    }
+
+                } else {
+                    selectedNeighbours.addAll(neighbours);
+                }
+
+                // Join with the selected neighbours
+                for (Node selectedNeighbour : selectedNeighbours) {
                     try {
+                        // Add the node information sent by the bootstrap server into the neighbour table.
+                        neighbourTable.insert(selectedNeighbour);
 
                         // Send join message to the added neighbours.
-                        System.out.println("Send join message: " + ip + ":" + port);
-                        Controller.join(ip, Integer.parseInt(port));
-                        System.out.println("Joined: " + ip + ":" + port);
+                        System.out.println("Send join message: " + selectedNeighbour.getNodeIp() + ":" +
+                                selectedNeighbour.getPort());
+                        Controller.join(selectedNeighbour.getNodeIp(), selectedNeighbour.getPort());
+                        System.out.println("Joined: " + selectedNeighbour.getNodeIp() + ":" +
+                                selectedNeighbour.getPort());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

@@ -1,8 +1,12 @@
 package com.msc.handler;
 
-import com.msc.model.Files;
+import com.msc.Controller;
+import com.msc.model.CommonConstants;
+import com.msc.model.SearchRequest;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.StringTokenizer;
 
 /**
  * This class is used to handle search request messages.
@@ -10,10 +14,38 @@ import java.util.List;
 public class SearchRequestHandler implements IncomingMsgHandler {
 
     @Override
-    public void handle(String message) {
+    public void handle(String message, String sourceIp, Integer sourcePort) {
 
-        List<String> localFileList = Files.getInstance().getLocalFileList();
+        StringTokenizer stringTokenizer = new StringTokenizer(message, " ");
+        int length = Integer.parseInt(stringTokenizer.nextToken());
+        String command = stringTokenizer.nextToken();
 
+        String ip = stringTokenizer.nextToken();
+        String port = stringTokenizer.nextToken();
 
+        String searchString = stringTokenizer.nextToken();
+        StringBuilder stringBuilder = new StringBuilder(searchString);
+
+        while (!searchString.endsWith("\"")) {
+            searchString = stringTokenizer.nextToken();
+            stringBuilder.append(" ").append(searchString);
+        }
+
+        String hops = stringTokenizer.nextToken();
+        hops = hops.replaceAll("[^\\d.]", "");
+
+        try {
+            if (Integer.parseInt(hops) > CommonConstants.HOPS) {
+                Controller.searchResponse(ip, Integer.parseInt(port), Collections.emptyList(), Integer.parseInt(hops));
+            } else {
+                SearchRequest searchRequest = new SearchRequest(ip, Integer.parseInt(port),
+                        sourceIp, sourcePort, stringBuilder.toString()
+                        .replace("\"", ""), Integer.parseInt(hops));
+
+                Controller.search(searchRequest);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

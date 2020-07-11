@@ -8,6 +8,9 @@ public class NodeConfig {
     String ip;
     Integer port;
     String username;
+    String bootstrapServerIp;
+    Integer bootstrapServerPort;
+    boolean isSearchCacheEnabled;
 
     private static volatile NodeConfig nodeConfig;
 
@@ -48,5 +51,29 @@ public class NodeConfig {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getBootstrapServerIp() {
+        return bootstrapServerIp;
+    }
+
+    public void setBootstrapServerIp(String bootstrapServerIp) {
+        this.bootstrapServerIp = bootstrapServerIp;
+    }
+
+    public Integer getBootstrapServerPort() {
+        return bootstrapServerPort;
+    }
+
+    public void setBootstrapServerPort(Integer bootstrapServerPort) {
+        this.bootstrapServerPort = bootstrapServerPort;
+    }
+
+    public boolean isSearchCacheEnabled() {
+        return isSearchCacheEnabled;
+    }
+
+    public void setSearchCacheEnabled(boolean searchCacheEnabled) {
+        isSearchCacheEnabled = searchCacheEnabled;
     }
 }

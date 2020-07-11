@@ -7,4 +7,6 @@ public class CommonConstants {
 
     public static final int MSG_LENGTH_FIELD_SIZE = 4;
     public static final int HOPS = 10;
+    public static final int SEARCH_MSG_FORWARDING_LIMIT = 2;
+    public static final int MAX_ALLOWED_TO_JOIN = 2;
 }

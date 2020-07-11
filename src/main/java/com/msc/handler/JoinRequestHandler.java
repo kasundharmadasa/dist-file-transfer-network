@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 public class JoinRequestHandler implements IncomingMsgHandler {
 
     @Override
-    public void handle(String message) {
+    public void handle(String message, String sourceIp, Integer sourcePort) {
 
         Neighbours neighbourTable = Neighbours.getInstance();
         System.out.println("Join request: " + message);
