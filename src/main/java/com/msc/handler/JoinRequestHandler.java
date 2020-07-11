@@ -14,7 +14,7 @@ public class JoinRequestHandler implements IncomingMsgHandler {
     public void handle(String message, String sourceIp, Integer sourcePort) {
 
         Neighbours neighbourTable = Neighbours.getInstance();
-        System.out.println("Join request: " + message);
+        //System.out.println("Join request: " + message);
         StringTokenizer stringTokenizer = new StringTokenizer(message, " ");
         int length = Integer.parseInt(stringTokenizer.nextToken());
         String command = stringTokenizer.nextToken();

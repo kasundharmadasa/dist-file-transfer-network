@@ -62,7 +62,7 @@ public class UDPConnector implements Connector {
         MessageParser messageParser = new MessageParser();
         IncomingMsgHandler responseHandler = messageParser.parse(incomingMessage);
 
-        System.out.println(incomingMessage + " " + incomingPacket.getAddress().getHostAddress() + ":" + incomingPacket.getPort());
+        //System.out.println(incomingMessage + " " + incomingPacket.getAddress().getHostAddress() + ":" + incomingPacket.getPort());
         return (Future<String>) executorService.submit(() -> responseHandler.handle(incomingMessage,
                 incomingPacket.getAddress().getHostAddress(), incomingPacket.getPort()));
     }
