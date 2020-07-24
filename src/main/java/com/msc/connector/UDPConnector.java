@@ -24,7 +24,7 @@ public class UDPConnector implements Connector {
 
     private UDPConnector() {
         try {
-            socket = new DatagramSocket(NodeConfig.getInstance().getPort());
+            socket = new DatagramSocket(NodeConfig.getInstance().getUdpPort());
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -62,7 +62,7 @@ public class UDPConnector implements Connector {
         MessageParser messageParser = new MessageParser();
         IncomingMsgHandler responseHandler = messageParser.parse(incomingMessage);
 
-        //System.out.println(incomingMessage + " " + incomingPacket.getAddress().getHostAddress() + ":" + incomingPacket.getPort());
+        //System.out.println(incomingMessage + " " + incomingPacket.getAddress().getHostAddress() + ":" + incomingPacket.getUdpPort());
         return (Future<String>) executorService.submit(() -> responseHandler.handle(incomingMessage,
                 incomingPacket.getAddress().getHostAddress(), incomingPacket.getPort()));
     }

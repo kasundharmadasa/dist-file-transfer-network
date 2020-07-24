@@ -13,16 +13,22 @@ import com.msc.model.SearchRequest;
 import com.msc.model.SearchRequests;
 import com.msc.util.CommonUtil;
 import com.msc.util.MessageUtil;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -38,7 +44,7 @@ public class Controller {
     public static void unregister() throws IOException {
 
         String message = MessageUtil.generateInitMessage(MessageConstants.UNREG_MESSAGE, NodeConfig.getInstance().getIp(),
-                NodeConfig.getInstance().getPort(), NodeConfig.getInstance().getUsername());
+                NodeConfig.getInstance().getUdpPort(), NodeConfig.getInstance().getUsername());
         connector.send(message, InetAddress.getByName(NodeConfig.getInstance().getBootstrapServerIp()),
                 NodeConfig.getInstance().getBootstrapServerPort());
     }
@@ -46,7 +52,7 @@ public class Controller {
     public static void join(String ip, int port) throws IOException {
 
         String message = MessageUtil.generateInitMessage(MessageConstants.JOIN_MESSAGE, NodeConfig.getInstance().getIp(),
-                NodeConfig.getInstance().getPort());
+                NodeConfig.getInstance().getUdpPort());
         connector.send(message, InetAddress.getByName(ip), port);
 
     }
@@ -54,7 +60,7 @@ public class Controller {
     public static void leave(String ip, int port) throws IOException {
 
         String message = MessageUtil.generateInitMessage(MessageConstants.LEAVE_MESSAGE, NodeConfig.getInstance().getIp(),
-                NodeConfig.getInstance().getPort());
+                NodeConfig.getInstance().getUdpPort());
         connector.send(message, InetAddress.getByName(ip), port);
 
     }
@@ -91,7 +97,7 @@ public class Controller {
 
                 if (!matchedFiles.isEmpty()) {
                     if (localIndex.getIp().equals(NodeConfig.getInstance().getIp()) &&
-                            localIndex.getPort().equals(NodeConfig.getInstance().getPort())) {
+                            localIndex.getPort().equals(NodeConfig.getInstance().getUdpPort())) {
 
                         // if the matched entry is from the this node, send the search response.
                         Controller.searchResponse(searchRequest.getInitiatedIp(), searchRequest.getInitiatedPort(),
@@ -112,6 +118,52 @@ public class Controller {
 
         }
 
+    }
+
+    public static void download(String filename, String ip, String port) {
+
+        HttpGet request = null;
+        try {
+            String url = "http://" + ip + ":" + port +  "/download/" + URLEncoder.encode(filename, "UTF-8");
+            request = new HttpGet(url);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(request)) {
+
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                // return it as a String
+                int result = response.getStatusLine().getStatusCode();
+                System.out.println("Received response with a status code " + result);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static int ping(String ip, Integer port) {
+        String url = "http://" + ip + ":" + port + "/ping";
+        HttpGet request = new HttpGet(url);
+
+        System.out.println("Sending ping message to " + url);
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(request)) {
+
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                // return it as a String
+                int result = response.getStatusLine().getStatusCode();
+                return result;
+            }
+
+        } catch (IOException e) {
+            // ignored
+        }
+        return -1;
     }
 
     private static void sendSearchReqToNeighbours(SearchRequest searchRequest, String message) throws IOException {
@@ -157,7 +209,7 @@ public class Controller {
     public static void searchResponse(String ip, int port, List<String> matchedFiles, Integer hops) throws IOException {
 
         String message = MessageUtil.generateSearchResponseMessage(NodeConfig.getInstance().getIp(),
-                NodeConfig.getInstance().getPort(), matchedFiles, hops);
+                NodeConfig.getInstance().getTcpPort(), matchedFiles, hops);
 
         System.out.println("Sending search response message " + message + " to " + ip + ":" + port);
         connector.send(message, InetAddress.getByName(ip), port);

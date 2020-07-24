@@ -6,12 +6,14 @@ public class LocalIndex implements Comparable<LocalIndex> {
 
     private String ip;
     private Integer port;
+    private Integer tcpPort;
     private List<List<String>> files;
     private Integer hops;
 
-    public LocalIndex(String ip, Integer port, List<List<String>> files, Integer hops) {
+    public LocalIndex(String ip, Integer port, Integer tcpPort, List<List<String>> files, Integer hops) {
         this.ip = ip;
         this.port = port;
+        this.tcpPort = tcpPort;
         this.files = files;
         this.hops = hops;
     }
@@ -30,6 +32,14 @@ public class LocalIndex implements Comparable<LocalIndex> {
 
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public Integer getTcpPort() {
+        return tcpPort;
+    }
+
+    public void setTcpPort(Integer tcpPort) {
+        this.tcpPort = tcpPort;
     }
 
     public List<List<String>> getFiles() {

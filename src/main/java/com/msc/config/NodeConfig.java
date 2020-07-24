@@ -6,7 +6,8 @@ package com.msc.config;
 public class NodeConfig {
 
     String ip;
-    Integer port;
+    Integer udpPort;
+    Integer tcpPort;
     String username;
     String bootstrapServerIp;
     Integer bootstrapServerPort;
@@ -37,12 +38,28 @@ public class NodeConfig {
         this.ip = ip;
     }
 
-    public Integer getPort() {
-        return port;
+    public Integer getUdpPort() {
+        return udpPort;
     }
 
-    public void setPort(Integer port) {
-        this.port = port;
+    public void setUdpPort(Integer udpPort) {
+        this.udpPort = udpPort;
+    }
+
+    public Integer getTcpPort() {
+        return tcpPort;
+    }
+
+    public void setTcpPort(Integer tcpPort) {
+        this.tcpPort = tcpPort;
+    }
+
+    public static NodeConfig getNodeConfig() {
+        return nodeConfig;
+    }
+
+    public static void setNodeConfig(NodeConfig nodeConfig) {
+        NodeConfig.nodeConfig = nodeConfig;
     }
 
     public String getUsername() {

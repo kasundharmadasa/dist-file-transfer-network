@@ -35,6 +35,11 @@ public class LocalIndexTable {
         Collections.sort(localIndexList);
     }
 
+    public void remove(int index) {
+        this.localIndexList.remove(index);
+        Collections.sort(localIndexList);
+    }
+
     public List<LocalIndex> getLocalIndexList() {
         return localIndexList;
     }

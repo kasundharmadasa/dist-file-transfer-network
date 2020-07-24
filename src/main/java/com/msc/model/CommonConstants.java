@@ -12,4 +12,7 @@ public class CommonConstants {
     public static final int FILES_PER_NODE = 4;
     public static final int SEARCH_QUERIES_PER_ODE = 4;
 
+    public static final int FILE_SIZE_MAX = 10;
+    public static final int FILE_SIZE_MIN = 2;
+
 }

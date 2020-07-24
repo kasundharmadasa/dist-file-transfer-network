@@ -1,5 +1,6 @@
 package com.msc.handler;
 
+import com.msc.Controller;
 import com.msc.config.NodeConfig;
 import com.msc.model.LocalIndex;
 import com.msc.model.LocalIndexTable;
@@ -45,13 +46,20 @@ public class SearchResponseHandler implements IncomingMsgHandler {
             }
 
             if (NodeConfig.getInstance().isSearchCacheEnabled()) {
+                boolean foundEntry = false;
                 for (LocalIndex localIndex : LocalIndexTable.getInstance().getLocalIndexList()) {
-                    if (ip.equals(localIndex.getIp()) && Integer.parseInt(port) == localIndex.getPort()) {
+                    if (ip.equals(localIndex.getIp()) && Integer.parseInt(port) == localIndex.getTcpPort()) {
 
                         // Cache search result to the local index table.
                         localIndex.getFiles().addAll(fileListWithSeparatedFileNames);
+                        foundEntry = true;
                         break;
                     }
+                }
+
+                if (!foundEntry) {
+                    LocalIndexTable.getInstance().insert(new LocalIndex(ip, sourcePort, Integer.parseInt(port),
+                            fileListWithSeparatedFileNames, Integer.parseInt(hops)));
                 }
             }
 
@@ -59,6 +67,13 @@ public class SearchResponseHandler implements IncomingMsgHandler {
                 System.out.println("found file " + fileName + " in the node " + ip + ":" + port + " with " + hops +
                         " hops");
             }
+
+            if (!fileList.isEmpty()) {
+
+                System.out.println("Sending file download request for " + fileList.get(0));
+                Controller.download(fileList.get(0), ip, port);
+            }
+
         } else {
             System.out.println("file not found");
         }

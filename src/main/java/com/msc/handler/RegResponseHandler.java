@@ -40,7 +40,7 @@ public class RegResponseHandler implements IncomingMsgHandler {
                     Controller.unregister();
 
                     Thread.sleep(1000);
-                    Controller.register(NodeConfig.getInstance().getIp(), NodeConfig.getInstance().getPort(),
+                    Controller.register(NodeConfig.getInstance().getIp(), NodeConfig.getInstance().getUdpPort(),
                             NodeConfig.getInstance().getUsername());
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
