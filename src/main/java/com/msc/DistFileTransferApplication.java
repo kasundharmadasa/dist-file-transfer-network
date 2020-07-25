@@ -1,6 +1,5 @@
 package com.msc;
 
-import com.msc.config.FileStorageProperties;
 import com.msc.config.NodeConfig;
 import com.msc.connector.Connector;
 import com.msc.connector.UDPConnector;
@@ -13,7 +12,6 @@ import com.msc.model.Node;
 import com.msc.model.SearchRequest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,9 +22,6 @@ import java.util.Scanner;
 import java.util.concurrent.Future;
 
 @SpringBootApplication
-@EnableConfigurationProperties({
-        FileStorageProperties.class
-})
 public class DistFileTransferApplication {
 
     public static void main(String[] args) {
@@ -60,7 +55,7 @@ public class DistFileTransferApplication {
         // Send heartbeat
         new Thread(() -> {
             while (true) {
-                sendHearbeat();
+                sendHeartbeat();
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {
@@ -70,10 +65,8 @@ public class DistFileTransferApplication {
         }
         ).start();
 
-
         // Register in the Bootstrap Server
         BSRegister();
-
 
         while (true) {
 
@@ -221,7 +214,7 @@ public class DistFileTransferApplication {
         return selectedQueries;
     }
 
-    private static void sendHearbeat() {
+    private static void sendHeartbeat() {
 
         // send heartbeat for entries in the local search index cache
         List<LocalIndex> localIndices = LocalIndexTable.getInstance().getLocalIndexList();
@@ -249,16 +242,16 @@ public class DistFileTransferApplication {
             Node neighbour = neighbours.get(index);
             int neighbourTcpPort = neighbour.getPort() - CommonConstants.TCP_UDP_PORT_DIFFERENCE;
 
-                if (Controller.ping(neighbour.getNodeIp(),
-                        neighbourTcpPort) != 200) {
+            if (Controller.ping(neighbour.getNodeIp(),
+                    neighbourTcpPort) != 200) {
 
-                    System.out.println("ping unsuccessful for " + neighbour.getNodeIp() + ":" + neighbourTcpPort);
-                    System.out.println("Removing " + neighbour.getNodeIp() + ":" + neighbourTcpPort + " from " +
-                            "neighbour table");
-                    Neighbours.getInstance().getPeerNodeList().remove(index);
-                } else {
-                    System.out.println("ping successful for " + neighbour.getNodeIp() + ":" + neighbourTcpPort);
-                }
+                System.out.println("ping unsuccessful for " + neighbour.getNodeIp() + ":" + neighbourTcpPort);
+                System.out.println("Removing " + neighbour.getNodeIp() + ":" + neighbourTcpPort + " from " +
+                        "neighbour table");
+                Neighbours.getInstance().getPeerNodeList().remove(index);
+            } else {
+                System.out.println("ping successful for " + neighbour.getNodeIp() + ":" + neighbourTcpPort);
+            }
         }
     }
 
@@ -267,10 +260,13 @@ public class DistFileTransferApplication {
             if (arg.contains("ip")) {
                 NodeConfig.getInstance().setIp(arg.substring(arg.lastIndexOf("=") + 1));
             } else if (arg.contains("udp.port")) {
-                NodeConfig.getInstance().setUdpPort(Integer.parseInt(arg.substring(arg
-                        .lastIndexOf("=") + 1)));
-                NodeConfig.getInstance().setTcpPort(Integer.parseInt(arg.substring(arg
-                        .lastIndexOf("=") + 1)) - CommonConstants.TCP_UDP_PORT_DIFFERENCE);
+                int udpPort = Integer.parseInt(arg.substring(arg.lastIndexOf("=") + 1));
+                if (udpPort < CommonConstants.UDP_PORT_RANGE_START) {
+                    System.out.println("UDP port should be greater than " + CommonConstants.UDP_PORT_RANGE_START);
+                    System.exit(0);
+                }
+                NodeConfig.getInstance().setUdpPort(udpPort);
+                NodeConfig.getInstance().setTcpPort(udpPort - CommonConstants.TCP_UDP_PORT_DIFFERENCE);
             } else if (arg.contains("username")) {
                 NodeConfig.getInstance().setUsername(arg.substring(arg.lastIndexOf("=") + 1));
             } else if (arg.contains("bs.ip")) {
@@ -294,6 +290,9 @@ public class DistFileTransferApplication {
         }
     }
 
+    /**
+     * Listening for the commands given by the console.
+     */
     private static void listenForCommands() {
         Scanner scanner = new Scanner(System.in);
         String command = scanner.nextLine();

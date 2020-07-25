@@ -1,6 +1,5 @@
 package com.msc.service;
 
-import com.msc.config.FileStorageProperties;
 import com.msc.model.CommonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,7 @@ public class FileService {
     private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
     @Autowired
-    public FileService(FileStorageProperties fileStorageProperties) {
+    public FileService() {
     }
 
     public Resource loadFileAsResource(String fileName) {
@@ -40,7 +39,7 @@ public class FileService {
 
             String fileHash;
             try (InputStream fileInputStream = new FileInputStream(file)) {
-              fileHash  = org.apache.commons.codec.digest.DigestUtils.md5Hex(fileInputStream);
+                fileHash = org.apache.commons.codec.digest.DigestUtils.md5Hex(fileInputStream);
             }
 
             System.out.println("File size: " + randFileSize + "MB");
