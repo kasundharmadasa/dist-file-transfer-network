@@ -15,4 +15,6 @@ public class CommonConstants {
     public static final int FILE_SIZE_MAX = 10;
     public static final int FILE_SIZE_MIN = 2;
 
+    public static final int TCP_UDP_PORT_DIFFERENCE = 40000;
+
 }

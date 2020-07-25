@@ -30,12 +30,12 @@ import java.util.concurrent.Future;
 public class DistFileTransferApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DistFileTransferApplication.class, args);
 
         // Add the node configurations
-
         List<String> argsList = Arrays.asList(args);
         parseCommandLineArgs(argsList);
+
+        SpringApplication.run(DistFileTransferApplication.class, args);
 
         Connector connector = UDPConnector.getInstance();
 
@@ -222,23 +222,43 @@ public class DistFileTransferApplication {
     }
 
     private static void sendHearbeat() {
+
+        // send heartbeat for entries in the local search index cache
         List<LocalIndex> localIndices = LocalIndexTable.getInstance().getLocalIndexList();
-        List<Integer> indexesTobeRemoved = new ArrayList<>();
         for (int index = 0; index < localIndices.size(); index++) {
 
             LocalIndex localIndex = localIndices.get(index);
             if (!(localIndex.getIp() + ":" + localIndex.getTcpPort()).equals(NodeConfig.getInstance().getIp() +
                     ":" + NodeConfig.getInstance().getTcpPort())) {
                 if (Controller.ping(localIndex.getIp(), localIndex.getTcpPort()) != 200) {
-                    indexesTobeRemoved.add(index);
+                    System.out.println("ping unsuccessful for " + localIndex.getIp() + ":" + localIndex.getPort());
+                    System.out.println("Removing " + localIndex.getIp() + ":" + localIndex.getPort() + " from " +
+                            "search response cache");
+                    LocalIndexTable.getInstance().remove(index);
                 } else {
                     System.out.println("ping successful for " + localIndex.getIp() + ":" + localIndex.getPort());
                 }
             }
         }
+        LocalIndexTable.getInstance().sort();
 
-        for (int index : indexesTobeRemoved) {
-            LocalIndexTable.getInstance().remove(index);
+        // send heartbeat for entries in the neighbour table
+        List<Node> neighbours = Neighbours.getInstance().getPeerNodeList();
+        for (int index = 0; index < neighbours.size(); index++) {
+
+            Node neighbour = neighbours.get(index);
+            int neighbourTcpPort = neighbour.getPort() - CommonConstants.TCP_UDP_PORT_DIFFERENCE;
+
+                if (Controller.ping(neighbour.getNodeIp(),
+                        neighbourTcpPort) != 200) {
+
+                    System.out.println("ping unsuccessful for " + neighbour.getNodeIp() + ":" + neighbourTcpPort);
+                    System.out.println("Removing " + neighbour.getNodeIp() + ":" + neighbourTcpPort + " from " +
+                            "neighbour table");
+                    Neighbours.getInstance().getPeerNodeList().remove(index);
+                } else {
+                    System.out.println("ping successful for " + neighbour.getNodeIp() + ":" + neighbourTcpPort);
+                }
         }
     }
 
@@ -249,9 +269,8 @@ public class DistFileTransferApplication {
             } else if (arg.contains("udp.port")) {
                 NodeConfig.getInstance().setUdpPort(Integer.parseInt(arg.substring(arg
                         .lastIndexOf("=") + 1)));
-            } else if (arg.contains("server.port")) {
                 NodeConfig.getInstance().setTcpPort(Integer.parseInt(arg.substring(arg
-                        .lastIndexOf("=") + 1)));
+                        .lastIndexOf("=") + 1)) - CommonConstants.TCP_UDP_PORT_DIFFERENCE);
             } else if (arg.contains("username")) {
                 NodeConfig.getInstance().setUsername(arg.substring(arg.lastIndexOf("=") + 1));
             } else if (arg.contains("bs.ip")) {

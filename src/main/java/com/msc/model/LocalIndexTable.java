@@ -37,6 +37,9 @@ public class LocalIndexTable {
 
     public void remove(int index) {
         this.localIndexList.remove(index);
+    }
+
+    public void sort() {
         Collections.sort(localIndexList);
     }
 
