@@ -61,7 +61,8 @@ public class StatCollector {
             // create CSVWriter object filewriter object as parameter
             CSVWriter writer = new CSVWriter(outputfile);
 
-            String[] header = { "Initiated IP", "Class", "Marks" };
+            String[] header = { "Initiated IP", "Initiated Port", "Received IP", "Received Port", "Search String",
+            "Hops"};
             writer.writeNext(header);
 
             for (SearchRequest searchRequest : nodeMessages) {
@@ -91,6 +92,8 @@ public class StatCollector {
             // create CSVWriter object filewriter object as parameter
             CSVWriter writer = new CSVWriter(outputfile);
 
+            String[] header = { "Initiated Timestamp", "Search String"};
+            writer.writeNext(header);
             for (Search search : initiatedSearches) {
                 String[] data = {search.initiatedTimestamp.toString(), search.searchString};
 
@@ -116,6 +119,9 @@ public class StatCollector {
 
             // create CSVWriter object filewriter object as parameter
             CSVWriter writer = new CSVWriter(outputfile);
+
+            String[] header = { "Received Timestamp", "Received File names", "Hops"};
+            writer.writeNext(header);
 
             for (SearchResponse searchResponse : searchResponses) {
 

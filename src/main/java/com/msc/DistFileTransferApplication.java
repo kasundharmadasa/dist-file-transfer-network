@@ -334,8 +334,9 @@ public class DistFileTransferApplication {
         }
 
         // initiate random search
-        if (command.startsWith("publish")) {
+        if (command.equals("publish")) {
             StatCollector.getInstance().publish();
+            System.out.println("Data publishing completed");
         }
     }
 
