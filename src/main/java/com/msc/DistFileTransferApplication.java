@@ -9,6 +9,7 @@ import com.msc.model.LocalIndexTable;
 import com.msc.model.LocalStorage;
 import com.msc.model.Neighbours;
 import com.msc.model.Node;
+import com.msc.model.Search;
 import com.msc.model.SearchRequest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -57,7 +58,7 @@ public class DistFileTransferApplication {
             while (true) {
                 sendHeartbeat();
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(20000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -85,8 +86,9 @@ public class DistFileTransferApplication {
         SearchRequest searchRequest = new SearchRequest(NodeConfig.getInstance().getIp(),
                 NodeConfig.getInstance().getUdpPort(),
                 NodeConfig.getInstance().getIp(),
-                NodeConfig.getInstance().getUdpPort(), searchQuery, 1);
+                NodeConfig.getInstance().getUdpPort(), searchQuery, 0);
 
+        StatCollector.getInstance().getInitiatedSearches().add(new Search(System.currentTimeMillis(), searchQuery));
         try {
             Controller.search(searchRequest);
         } catch (IOException e) {
@@ -332,17 +334,8 @@ public class DistFileTransferApplication {
         }
 
         // initiate random search
-        if (command.startsWith("download")) {
-            try {
-                List<String> selectedQueries = selectSearchQueries();
-                for (String searchQuery : selectedQueries) {
-                    System.out.println("Initiating search for " + searchQuery);
-                    initiateSearch(searchQuery);
-                    Thread.sleep(10000);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (command.startsWith("publish")) {
+            StatCollector.getInstance().publish();
         }
     }
 

@@ -2,8 +2,6 @@ package com.msc.controller;
 
 import com.msc.model.LocalStorage;
 import com.msc.service.FileService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -20,8 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class FileController {
-
-    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
     @Autowired
     private FileService fileStorageService;

@@ -1,8 +1,6 @@
 package com.msc.service;
 
 import com.msc.model.CommonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -18,8 +16,6 @@ import java.util.Random;
 
 @Service
 public class FileService {
-
-    private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
     @Autowired
     public FileService() {
@@ -45,7 +41,6 @@ public class FileService {
             System.out.println("File size: " + randFileSize + "MB");
             System.out.println("File hash: " + fileHash);
         } catch (IOException ex) {
-            logger.error("Error while generating the file " + fileName, ex);
             ex.printStackTrace();
         }
         return resource;

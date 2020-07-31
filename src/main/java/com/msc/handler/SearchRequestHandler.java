@@ -1,6 +1,7 @@
 package com.msc.handler;
 
 import com.msc.Controller;
+import com.msc.StatCollector;
 import com.msc.model.CommonConstants;
 import com.msc.model.SearchRequest;
 
@@ -34,14 +35,16 @@ public class SearchRequestHandler implements IncomingMsgHandler {
         String hops = stringTokenizer.nextToken();
         hops = hops.replaceAll("[^\\d.]", "");
 
+        SearchRequest searchRequest = new SearchRequest(ip, Integer.parseInt(port),
+                sourceIp, sourcePort, stringBuilder.toString()
+                .replace("\"", ""), Integer.parseInt(hops));
+
+        // Add request to stat collector
+        StatCollector.getInstance().getNodeMessages().add(searchRequest);
         try {
             if (Integer.parseInt(hops) > CommonConstants.HOPS) {
                 Controller.searchResponse(ip, Integer.parseInt(port), Collections.emptyList(), Integer.parseInt(hops));
             } else {
-                SearchRequest searchRequest = new SearchRequest(ip, Integer.parseInt(port),
-                        sourceIp, sourcePort, stringBuilder.toString()
-                        .replace("\"", ""), Integer.parseInt(hops));
-
                 Controller.search(searchRequest);
             }
         } catch (IOException e) {

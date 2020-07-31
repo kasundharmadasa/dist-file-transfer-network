@@ -11,6 +11,7 @@ import com.msc.model.Neighbours;
 import com.msc.model.Node;
 import com.msc.model.SearchRequest;
 import com.msc.model.SearchRequests;
+import com.msc.model.StoredSearchRequest;
 import com.msc.util.CommonUtil;
 import com.msc.util.MessageUtil;
 import org.apache.http.HttpEntity;
@@ -69,10 +70,12 @@ public class Controller {
 
         String searchRequestKey = CommonUtil.generateSearchRequestKey(searchRequest);
 
-        if (!SearchRequests.getInstance().getSearchRequestMap().containsKey(searchRequestKey)) {
+        if (!SearchRequests.getInstance().getSearchRequestMap().containsKey(searchRequestKey) ||
+                isSearchRequestCacheExpired(searchRequestKey)) {
 
             // add to the local search request table
-            SearchRequests.getInstance().insert(searchRequestKey, searchRequest);
+            SearchRequests.getInstance().insert(searchRequestKey, new StoredSearchRequest(searchRequest,
+                    System.currentTimeMillis()));
 
             String message = MessageUtil.generateSearchMessage(searchRequest.getInitiatedIp(),
                     searchRequest.getInitiatedPort(), searchRequest.getSearchString(), searchRequest.getHops() + 1);
@@ -118,6 +121,17 @@ public class Controller {
 
         }
 
+    }
+
+    private static boolean isSearchRequestCacheExpired(String searchRequestKey) {
+
+       if (SearchRequests.getInstance().getSearchRequestMap().get(searchRequestKey).getStoredTime() +
+                CommonConstants.SEARCH_REQUEST_CACHE_EXPIRY_MILLIS < System.currentTimeMillis()) {
+           SearchRequests.getInstance().getSearchRequestMap().remove(searchRequestKey);
+           return true;
+       } else {
+           return false;
+       }
     }
 
     public static void download(String filename, String ip, String port) {

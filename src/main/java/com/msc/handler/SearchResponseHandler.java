@@ -1,9 +1,11 @@
 package com.msc.handler;
 
 import com.msc.Controller;
+import com.msc.StatCollector;
 import com.msc.config.NodeConfig;
 import com.msc.model.LocalIndex;
 import com.msc.model.LocalIndexTable;
+import com.msc.model.SearchResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -62,6 +64,9 @@ public class SearchResponseHandler implements IncomingMsgHandler {
                             fileListWithSeparatedFileNames, Integer.parseInt(hops)));
                 }
             }
+
+            StatCollector.getInstance().getSearchResponses().add(new SearchResponse(System.currentTimeMillis(),
+                    Integer.parseInt(hops), fileList));
 
             for (String fileName : fileList) {
                 System.out.println("found file " + fileName + " in the node " + ip + ":" + port + " with " + hops +

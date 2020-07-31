@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SearchRequests {
 
-    private static Map<String, SearchRequest> searchRequestMap;
+    private static Map<String, StoredSearchRequest> searchRequestMap;
     private static volatile SearchRequests searchRequests;
 
     static {
@@ -30,12 +30,12 @@ public class SearchRequests {
         return searchRequests;
     }
 
-    public void insert(String key, SearchRequest searchRequest) {
+    public void insert(String key, StoredSearchRequest storedSearchRequest) {
 
-        searchRequestMap.put(key, searchRequest);
+        searchRequestMap.put(key, storedSearchRequest);
     }
 
-    public Map<String, SearchRequest> getSearchRequestMap() {
+    public Map<String, StoredSearchRequest> getSearchRequestMap() {
         return searchRequestMap;
     }
 }
