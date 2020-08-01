@@ -213,7 +213,8 @@ public class DistFileTransferApplication {
             selectedQueries.add(queriesList.get(selectedFileIndex));
         }
 
-        return selectedQueries;
+        //return selectedQueries;
+        return queriesList;
     }
 
     private static void sendHeartbeat() {
