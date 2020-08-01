@@ -1,6 +1,8 @@
 package com.msc;
 
 import com.msc.config.NodeConfig;
+import com.msc.model.Neighbours;
+import com.msc.model.Node;
 import com.msc.model.Search;
 import com.msc.model.SearchRequest;
 import com.msc.model.SearchResponse;
@@ -48,6 +50,34 @@ public class StatCollector {
 
         publishSearchResponses();
 
+        publishNeighbours();
+
+    }
+
+    private void publishNeighbours() {
+
+        File file = new File(System.getProperty("user.dir") + File.separator + NodeConfig.getInstance().getUdpPort() +
+                "-neighbours.csv");
+        try {
+            // create FileWriter object with file as parameter
+            FileWriter outputfile = new FileWriter(file);
+
+            // create CSVWriter object filewriter object as parameter
+            CSVWriter writer = new CSVWriter(outputfile);
+
+            String[] header = { "Neighbour Count"};
+            writer.writeNext(header);
+
+                String[] data = {((Integer) Neighbours.getInstance().getPeerNodeList().size()).toString()};
+
+                writer.writeNext(data);
+
+
+            // closing writer connection
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void publishNodeMessages() {
