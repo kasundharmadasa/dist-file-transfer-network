@@ -231,7 +231,7 @@ public class DistFileTransferApplication {
                             "search response cache");
                     LocalIndexTable.getInstance().remove(index);
                 } else {
-                    System.out.println("ping successful for " + localIndex.getIp() + ":" + localIndex.getPort());
+                   // System.out.println("ping successful for " + localIndex.getIp() + ":" + localIndex.getPort());
                 }
             }
         }
