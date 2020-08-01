@@ -163,7 +163,7 @@ public class Controller {
         String url = "http://" + ip + ":" + port + "/ping";
         HttpGet request = new HttpGet(url);
 
-        System.out.println("Sending ping message to " + url);
+        //System.out.println("Sending ping message to " + url);
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
              CloseableHttpResponse response = httpClient.execute(request)) {
 
