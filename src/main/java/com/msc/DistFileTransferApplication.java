@@ -253,7 +253,7 @@ public class DistFileTransferApplication {
                         "neighbour table");
                 Neighbours.getInstance().getPeerNodeList().remove(index);
             } else {
-                System.out.println("ping successful for " + neighbour.getNodeIp() + ":" + neighbourTcpPort);
+                //System.out.println("ping successful for " + neighbour.getNodeIp() + ":" + neighbourTcpPort);
             }
         }
     }
